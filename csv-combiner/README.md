@@ -44,3 +44,22 @@ Your script would output
 ##  Considerations
 * You should use coding best practices. Your code should be re-usable and extensible.
 * Your code should be testable by a CI/CD process. Unit tests are important.
+
+// Packages needed
+
+npm install data-forge data-forge-fs
+
+// Shebang (Depending on User Files)
+
+#!/user/bin/env node
+vs.
+#! /usr/local/bin/node
+
+// Allows script executable for user and others
+
+chmod u+x csv-combiner.js
+
+// If Script can't run
+
+npm init in file
+node csv-combiner.js fileName.js fileName2.js

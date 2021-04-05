@@ -20,9 +20,8 @@ const readCSVFiles = fileNames => {
     let baseName = path.posix.basename(fileName);
 
     // Adds filename column to current CSV dataframe
-    let newSeries = df.deflate(row => row.filename);
-    newSeries = newSeries.select(value => value = baseName);
-    newDf = df.withSeries({ filename: newSeries });
+    let newSeries = df.deflate(row => row.filename).select(value => value = baseName);
+    let newDf = df.withSeries({ filename: newSeries });
 
     // Push CSV dataframe into Array
     readFiles.push(newDf);

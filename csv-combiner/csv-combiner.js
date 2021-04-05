@@ -7,27 +7,36 @@ const path = require('path');
 // Slices Names from Console ['./fixtures/accessories.csv', ...]
 const fileNames = process.argv.slice(2);
 
-const readFiles = [];
+const readCSVFiles = fileNames => {
+  const readFiles = [];
 
-// Use each fileName to Read & Transform Data
-fileNames.forEach(fileName => {
-  // Reads a CSV dataframe
-  let df = dataForgeFs.readFileSync(fileName).parseCSV();
+  // Use each fileName to Read & Transform Data
+  fileNames.forEach(fileName => {
 
-  // Filters filenames to base filenames
-  let baseName = path.posix.basename(fileName);
+    // Reads a CSV dataframe
+    let df = dataForgeFs.readFileSync(fileName).parseCSV();
 
-  // Adds filename column to current CSV dataframe
-  let newSeries = df.deflate(row => row.filename);
-  newSeries = newSeries.select(value => value = baseName);
-  newDf = df.withSeries({ filename: newSeries });
+    // Filters filenames to base filenames
+    let baseName = path.posix.basename(fileName);
 
-  // Push CSV dataframe into Array
-  readFiles.push(newDf);
-});
+    // Adds filename column to current CSV dataframe
+    let newSeries = df.deflate(row => row.filename);
+    newSeries = newSeries.select(value => value = baseName);
+    newDf = df.withSeries({ filename: newSeries });
 
-// Concat all Modified dataframes into one CSV dataframe
-const dataFrameConcat = dataForge.DataFrame.concat(readFiles);
+    // Push CSV dataframe into Array
+    readFiles.push(newDf);
+  });
+  return readFiles;
+};
 
-// Write the Concat Dataframe to Filesystem
-dataFrameConcat.asCSV().writeFileSync('combined.csv');
+const concatCSVFiles = (readCSVArray, csvReader) => {
+  // Concat all Modified dataframes into one CSV dataframe
+  const dataFrameConcat = dataForge.DataFrame.concat(csvReader(readCSVArray));
+
+  // Write the Concat Dataframe to Filesystem
+  dataFrameConcat.asCSV().writeFileSync('combined.csv');
+}
+
+concatCSVFiles(fileNames, readCSVFiles);
+

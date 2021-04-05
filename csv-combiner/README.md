@@ -45,21 +45,32 @@ Your script would output
 * You should use coding best practices. Your code should be re-usable and extensible.
 * Your code should be testable by a CI/CD process. Unit tests are important.
 
-// Packages needed
+## Personal Edits
+* Packages needed
 
-npm install data-forge data-forge-fs
+data-forge data-forge-fs
 
-// Shebang (Depending on User Files)
+* Shebang (Depending on User Files)
 
 #!/user/bin/env node
 vs.
 #! /usr/local/bin/node
 
-// Allows script executable for user and others
+* Allows script executable for user and others
 
 chmod u+x csv-combiner.js
 
-// If Script can't run
+* Troubleshooting
 
 npm init in file
 node csv-combiner.js fileName.js fileName2.js
+
+* Increasing V8 Memory Allocation
+
+Heap Test
+// const used = process.memoryUsage().heapUsed / 1024 / 1024;
+// console.log(`The script uses approximately ${Math.round(used * 100) / 100} MB`);
+
+Increasing V8 Heap
+- Console Command
+--max-old-space-size=2043 // Roughly 2GB for Garbage

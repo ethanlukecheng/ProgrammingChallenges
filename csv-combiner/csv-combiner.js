@@ -31,7 +31,3 @@ const dataFrameConcat = dataForge.DataFrame.concat(readFiles);
 
 // Write the Concat Dataframe to Filesystem
 dataFrameConcat.asCSV().writeFileSync('combined.csv');
-
-// Check Heap Used
-// const used = process.memoryUsage().heapUsed / 1024 / 1024;
-// console.log(`The script uses approximately ${Math.round(used * 100) / 100} MB`);

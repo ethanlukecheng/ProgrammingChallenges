@@ -4,29 +4,34 @@ const dataForge = require('data-forge');
 const dataForgeFs = require('data-forge-fs');
 const path = require('path');
 
-const combiner = () => {
-  const fileNames = process.argv.slice(2);
+// Slices Names from Console ['./fixtures/accessories.csv', ...]
+const fileNames = process.argv.slice(2);
 
-  const readFiles = [];
+const readFiles = [];
 
-  fileNames.forEach(fileName => {
-    let df = dataForgeFs.readFileSync(fileName).parseCSV();
+// Use each fileName to Read & Transform Data
+fileNames.forEach(fileName => {
+  // Reads a CSV dataframe
+  let df = dataForgeFs.readFileSync(fileName).parseCSV();
 
-    let baseName = path.posix.basename(fileName);
+  // Filters filenames to base filenames
+  let baseName = path.posix.basename(fileName);
 
-    let filenameSeries = new dataForge.Series([baseName]);
-    let newDf = df.withSeries('filename', filenameSeries);
+  // Adds filename column to current CSV dataframe
+  let newSeries = df.deflate(row => row.filename);
+  newSeries = newSeries.select(value => value = baseName);
+  newDf = df.withSeries({ filename: newSeries });
 
-    let newSeries = newDf.deflate(row => row.filename);
-    newSeries = newSeries.select(value => value = baseName);
-    newDf = newDf.withSeries({ filename: newSeries });
+  // Push CSV dataframe into Array
+  readFiles.push(newDf);
+});
 
-    readFiles.push(newDf);
-  });
+// Concat all Modified dataframes into one CSV dataframe
+const dataFrameConcat = dataForge.DataFrame.concat(readFiles);
 
-  const dataFrameConcat = dataForge.DataFrame.concat(readFiles);
+// Write the Concat Dataframe to Filesystem
+dataFrameConcat.asCSV().writeFileSync('combined.csv');
 
-  dataFrameConcat.asCSV().writeFileSync('combined.csv');
-};
-
-combiner();
+// Check Heap Used
+// const used = process.memoryUsage().heapUsed / 1024 / 1024;
+// console.log(`The script uses approximately ${Math.round(used * 100) / 100} MB`);
